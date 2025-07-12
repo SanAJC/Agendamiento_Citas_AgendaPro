@@ -15,32 +15,39 @@ class AuthViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'], permission_classes=[AllowAny] , url_path='login')
     def login(self, request):
-        serializer = LoginSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.COOKIES.get('data'))
 
         if serializer.is_valid(raise_exception=True):
             user = serializer.validated_data
             refresh = RefreshToken.for_user(user)
             access = AccessToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(access),
+            
+            response = Response()
+            response.set_cookie(key='access_token', value=str(access), httponly=True,secure=False ,samesite='Lax')
+            response.set_cookie(key='refresh_token', value=str(refresh), httponly=True,secure=False ,samesite='Lax')
+            response.data = {
                 'user': UserSerializer(user).data
-            })
+            }
+            return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated] , url_path='logout')
     def logout(self, request):
         try:
-            refresh_token = request.data['refresh']
+            refresh_token = request.COOKIES.get('refresh_token')
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response(status=status.HTTP_200_OK)
+            response = Response({"message": "Successfully logged out!"}, status=status.HTTP_200_OK)
+            response.delete_cookie("access_token")
+            response.delete_cookie("refresh_token")
+            return response 
         except (InvalidToken, TokenError):
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+          
     
     @action(detail=False, methods=['post'], url_path='register', permission_classes=[AllowAny])
     def register(self, request):
-        serializer = RegisterSerializer(data=request.data)
+        serializer = RegisterSerializer(data=request.COOKIES.get('data'))
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
@@ -48,7 +55,7 @@ class AuthViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'], url_path='refresh_token',permission_classes=[AllowAny])
     def refresh_token(self,request):
-        refresh_token = request.data.get("refresh_token")
+        refresh_token = request.COOKIES.get('refresh_token')
         if not refresh_token:
             return Response(
                 {"error":"Refresh-Token is required"}
@@ -56,12 +63,9 @@ class AuthViewSet(viewsets.ModelViewSet):
         try:
             token = RefreshToken(refresh_token)
             new_access_token = token.access_token
-            return Response(
-                {
-                    "access_token": str(new_access_token)
-                },
-                status=status.HTTP_200_OK
-            )
+            response = Response()
+            response.set_cookie(key='access_token', value=str(new_access_token), httponly=True,secure=False ,samesite='Lax')
+            return response
         except TokenError as e:
             return Response(
                 {"error": str(e)},
