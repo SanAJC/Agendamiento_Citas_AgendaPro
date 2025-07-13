@@ -69,6 +69,7 @@ class Plan(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    mp_plan_id = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -77,16 +78,17 @@ class Plan(models.Model):
 
 class Subscription(models.Model):
     STATUS = (
+        ('Pendiente', 'Pendiente'),
         ('Pagada', 'Pagada'),
         ('Cancelada', 'Cancelada'),
         ('Vencida', 'Vencida'),
     )
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=STATUS, default='Pagada')
+    status = models.CharField(max_length=20, choices=STATUS, default='Pendiente')
     date_start = models.DateField()
     date_end = models.DateField()
-
+    mp_subscription_id = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
