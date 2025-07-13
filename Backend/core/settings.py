@@ -33,6 +33,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Variables Entorno
+FRONTEND_URL = os.getenv('FRONTEND_URL')
+GOOGLE_OAUTH_CLIENT_ID = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
 
 # Application definition
 
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -55,6 +60,35 @@ INSTALLED_APPS = [
     'services',
     'api',
 ]
+
+# Configuración para Google
+SITE_ID = 1
+
+# Configuración específica del proveedor Google
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [ # Los permisos que solicitas
+            'profile',
+            'email',
+            'https://www.googleapis.com/auth/calendar',
+        ],
+        'AUTH_PARAMS': { # Parámetros adicionales para la autenticación
+            'access_type': 'offline',
+            'prompt': 'consent',
+        },
+        'OAUTH_PKCE_ENABLED': True, # Recomendado para seguridad
+    }
+}
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend', # standard django backend
+    'allauth.account.auth_backends.AuthenticationBackend', # all auth backend
+]
+
+LOGIN_REDIRECT_URL = '/callback/'
+LOGOUT_REDIRECT_URL = f'{FRONTEND_URL}/login/'
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_STORE_TOKENS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -95,7 +129,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agendaPro',
+        'NAME': 'agenda_pro',
         'USER': 'postgres',
         'PASSWORD': 'san_ats',
         'HOST': 'localhost',
