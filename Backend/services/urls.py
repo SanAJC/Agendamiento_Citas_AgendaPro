@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import google_account_status, connect_google_account
+from .views import google_account_status, connect_google_account, search_plan
 
 urlpatterns = [
     path('google-account-status/', google_account_status, name='google_account_status'),
     path('connect-google-account/', connect_google_account, name='connect_google_account'),
+    path('search-plan/', search_plan, name='search_plan'),
 ]

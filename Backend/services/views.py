@@ -1,5 +1,5 @@
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
@@ -7,7 +7,7 @@ from allauth.socialaccount.models import SocialAccount , SocialToken
 from django.shortcuts import redirect
 import json
 import urllib.parse
-
+from django.conf import settings
 #Google Auth
 @login_required
 def google_login_callback(request):
@@ -64,3 +64,18 @@ def connect_google_account(request):
     return redirect('/accounts/google/login/?process=connect/')
 
 
+#Mercado Pago
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def search_plan(request):
+    MP_BASE_URL = "https://api.mercadopago.com"
+    MP_TOKEN = settings.MERCADOPAGO_ACCESS_TOKEN
+    url = f"{MP_BASE_URL}/preapproval_plan/search"
+    headers = {
+        "Authorization": f"Bearer {MP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    resp = requests.get(url, headers=headers)
+    data = resp.json()
+    return Response(data)
