@@ -60,3 +60,35 @@ def update_plan(plan: Plan):
     resp.raise_for_status()
     return resp.json()
 
+def create_subscription(plan_id: str, customer_email: str, card_token_id: str):
+    url = f"{MP_BASE_URL}/preapproval"
+    headers = {
+        "Authorization": f"Bearer {MP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "preapproval_plan_id": plan_id,
+        "payer_email": customer_email, 
+        "card_token_id": card_token_id,
+        "status": "authorized",
+        "back_url": "https://www.yoursite.com"
+    }
+    resp = requests.post(url, json=payload, headers=headers)
+    resp.raise_for_status()
+    return resp.json()
+
+def update_subscription(subscription_id: str, customer_email: str, card_token_id: str):
+    url = f"{MP_BASE_URL}/preapproval/{subscription_id}"
+    headers = {
+        "Authorization": f"Bearer {MP_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "payer_email": customer_email, 
+        "card_token_id": card_token_id,
+        "status": "authorized",
+        "back_url": "https://www.yoursite.com"
+    }
+    resp = requests.put(url, json=payload, headers=headers)
+    resp.raise_for_status()
+    return resp.json()

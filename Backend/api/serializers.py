@@ -38,7 +38,7 @@ class PlanSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    business = BusinessSerializer(read_only=True)
+    customer = UserSerializer(read_only=True)
     plan = PlanSerializer(read_only=True)
     class Meta:
         model = Subscription
@@ -46,7 +46,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    business = BusinessSerializer(read_only=True)
+    customer = UserSerializer(read_only=True)
     subscription = SubscriptionSerializer(read_only=True)
     class Meta:
         model = Payment

@@ -86,27 +86,27 @@ class Subscription(models.Model):
         ('Cancelada', 'Cancelada'),
         ('Vencida', 'Vencida'),
     )
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS, default='Pendiente')
     date_start = models.DateField()
     date_end = models.DateField()
-    mp_subscription_id = models.CharField(max_length=100, blank=True, null=True)
+    card_token_id = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.business} - {self.plan} - {self.status}"
+        return f"{self.customer} - {self.plan} - {self.status}"
 
 class Payment(models.Model):
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.business} - {self.subscription} - {self.amount}"
+        return f"{self.customer} - {self.subscription} - {self.amount}"
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
