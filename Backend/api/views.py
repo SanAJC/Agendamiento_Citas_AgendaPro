@@ -5,7 +5,7 @@ from .models import Business, Service, Appointment, Subscription, Plan, Payment,
 from .serializers import BusinessSerializer, ServiceSerializer, AppointmentSerializer, SubscriptionSerializer, PlanSerializer, PaymentSerializer, NotificationSerializer , BusinessHourSerializer
 from services.mercado_pago import create_subscription, update_subscription
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, action
 from rest_framework.response import Response
 from rest_framework import status
 from services.google_calendar import GoogleCalendarService
