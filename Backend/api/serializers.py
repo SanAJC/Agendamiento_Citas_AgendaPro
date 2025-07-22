@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Business, Service, Appointment, Subscription, Plan, Payment, Notification, BusinessHour
+from .models import Business, Service, Appointment, Subscription, Plan, Notification, BusinessHour
 from authentication.models import User
 from authentication.serializers import UserSerializer
 
@@ -45,12 +45,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PaymentSerializer(serializers.ModelSerializer):
-    customer = UserSerializer(read_only=True)
-    subscription = SubscriptionSerializer(read_only=True)
-    class Meta:
-        model = Payment
-        fields = '__all__'
 
 class NotificationSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)

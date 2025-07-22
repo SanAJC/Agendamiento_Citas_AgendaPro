@@ -1,8 +1,8 @@
 from typing import override
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import Business, Service, Appointment, Subscription, Plan, Payment, Notification , BusinessHour
-from .serializers import BusinessSerializer, ServiceSerializer, AppointmentSerializer, SubscriptionSerializer, PlanSerializer, PaymentSerializer, NotificationSerializer , BusinessHourSerializer
+from .models import Business, Service, Appointment, Subscription, Plan, Notification , BusinessHour
+from .serializers import BusinessSerializer, ServiceSerializer, AppointmentSerializer, SubscriptionSerializer, PlanSerializer, NotificationSerializer , BusinessHourSerializer
 from services.mercado_pago import create_subscription, update_subscription
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes, action
@@ -149,11 +149,6 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
 class PlanViewSet(viewsets.ModelViewSet):
     queryset = Plan.objects.all()
     serializer_class = PlanSerializer
-
-@permission_classes([IsAuthenticated])
-class PaymentViewSet(viewsets.ModelViewSet):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
 
 
 @permission_classes([IsAuthenticated])
